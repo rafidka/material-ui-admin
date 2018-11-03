@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { CssBaseline } from "@material-ui/core";
-import { Layout } from "./Layout";
+import { Layout } from "./containers/Layout";
 
 class App extends Component {
   render() {

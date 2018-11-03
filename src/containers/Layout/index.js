@@ -2,9 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { TopBar } from "./TopBar";
-import { NavDrawer } from "./NavDrawer";
 import { Typography } from "@material-ui/core";
+import { TopBar } from "./components/TopBar";
+import { NavDrawer } from "./components/NavDrawer";
+import { closeNavDrawer, openNavDrawer } from "./actions";
+import { connect } from "react-redux";
+import layoutReducer from "./reducer";
 
 const drawerWidth = 240;
 
@@ -30,7 +33,7 @@ const styles = theme => ({
   }
 });
 
-class PersistentDrawerLeft extends React.Component {
+class Layout extends React.Component {
   state = {
     drawerOpen: false
   };
@@ -48,18 +51,17 @@ class PersistentDrawerLeft extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { drawerOpen } = this.state;
+    const { classes, openNavDrawer, closeNavDrawer, layout } = this.props;
 
     return (
       <div className={classes.root}>
         <CssBaseline />
         <TopBar
-          open={drawerOpen}
-          onDrawerClicked={this.handleDrawerToggle}
+          open={layout.isNavDrawerOpen}
+          onDrawerClicked={openNavDrawer}
           title={"Material-UI Admin"}
         />
-        <NavDrawer open={drawerOpen} onClose={this.handleDrawerClose} />
+        <NavDrawer open={layout.isNavDrawerOpen} onClose={closeNavDrawer} />
         <main className={classes.content}>
           <div className={classes.drawerHeader} />
           <Typography>This is a test</Typography>
@@ -69,10 +71,26 @@ class PersistentDrawerLeft extends React.Component {
   }
 }
 
-PersistentDrawerLeft.propTypes = {
+Layout.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired
 };
 
-const Layout = withStyles(styles, { withTheme: true })(PersistentDrawerLeft);
-export { Layout };
+function mapDispatchToProps(dispatch) {
+  return {
+    openNavDrawer: () => dispatch(openNavDrawer()),
+    closeNavDrawer: () => dispatch(closeNavDrawer())
+  };
+}
+
+function mapStateToProps(state) {
+  return { layout: state.layout };
+}
+
+const reduxComp = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles, { withTheme: true })(Layout));
+
+const reduxCompWithStyles = withStyles(styles, { withTheme: true })(reduxComp);
+export { reduxCompWithStyles as Layout, layoutReducer };
