@@ -9,8 +9,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import { PAGES } from "../pages";
 
 const drawerWidth = 240;
 
@@ -30,13 +29,14 @@ const styles = theme => ({
   }
 });
 
-function NavDrawer({ classes, onClose, open, theme }) {
+function NavDrawer({ classes, onClick, onClose, open }) {
   return (
     <Drawer
       className={classes.drawer}
-      variant="persistent"
+      variant="temporary"
       anchor="left"
       open={open}
+      onClose={onClose}
       classes={{
         paper: classes.drawerPaper
       }}
@@ -48,12 +48,10 @@ function NavDrawer({ classes, onClose, open, theme }) {
       </div>
       <Divider />
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
+        {PAGES.map(page => (
+          <ListItem button key={page.name} onClick={() => onClick(page)}>
+            <ListItemIcon>{page.icon}</ListItemIcon>
+            <ListItemText primary={page.name} />
           </ListItem>
         ))}
       </List>
@@ -63,9 +61,10 @@ function NavDrawer({ classes, onClose, open, theme }) {
 
 NavDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  theme: PropTypes.object.isRequired
+  onClick: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired
 };
 
-const comp = withStyles(styles, { withTheme: true })(NavDrawer);
+const comp = withStyles(styles)(NavDrawer);
 export { comp as NavDrawer };

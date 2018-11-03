@@ -1,15 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { Typography } from "@material-ui/core";
 import { TopBar } from "./components/TopBar";
 import { NavDrawer } from "./components/NavDrawer";
 import { closeNavDrawer, openNavDrawer } from "./actions";
 import { connect } from "react-redux";
 import layoutReducer from "./reducer";
-
-const drawerWidth = 240;
+import { Router } from "./components/Router";
 
 const styles = theme => ({
   root: {
@@ -28,26 +27,16 @@ const styles = theme => ({
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    }),
-    marginLeft: -drawerWidth
+    })
   }
 });
 
 class Layout extends React.Component {
-  state = {
-    drawerOpen: false
-  };
-
-  handleDrawerToggle = () => {
-    if (this.drawerOpen) {
-      this.setState({ drawerOpen: false });
-    } else {
-      this.setState({ drawerOpen: true });
-    }
-  };
-
-  handleDrawerClose = () => {
-    this.setState({ drawerOpen: false });
+  onNavItemClicked = page => {
+    const { history, closeNavDrawer } = this.props;
+    console.dir(page);
+    history.push(page.path);
+    closeNavDrawer();
   };
 
   render() {
@@ -61,10 +50,14 @@ class Layout extends React.Component {
           onDrawerClicked={openNavDrawer}
           title={"Material-UI Admin"}
         />
-        <NavDrawer open={layout.isNavDrawerOpen} onClose={closeNavDrawer} />
+        <NavDrawer
+          open={layout.isNavDrawerOpen}
+          onClose={closeNavDrawer}
+          onClick={this.onNavItemClicked}
+        />
         <main className={classes.content}>
           <div className={classes.drawerHeader} />
-          <Typography>This is a test</Typography>
+          <Router />
         </main>
       </div>
     );
@@ -90,7 +83,7 @@ function mapStateToProps(state) {
 const reduxComp = connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles, { withTheme: true })(Layout));
+)(withStyles(styles, { withTheme: true })(withRouter(Layout)));
 
 const reduxCompWithStyles = withStyles(styles, { withTheme: true })(reduxComp);
 export { reduxCompWithStyles as Layout, layoutReducer };
