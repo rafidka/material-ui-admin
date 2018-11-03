@@ -34,7 +34,6 @@ const styles = theme => ({
 class Layout extends React.Component {
   onNavItemClicked = page => {
     const { history, closeNavDrawer } = this.props;
-    console.dir(page);
     history.push(page.path);
     closeNavDrawer();
   };
